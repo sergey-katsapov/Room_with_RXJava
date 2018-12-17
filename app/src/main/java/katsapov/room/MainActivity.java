@@ -1,10 +1,10 @@
 package katsapov.room;
 
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -29,16 +29,16 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import katsapov.room.Database.UserRepository;
 import katsapov.room.DAO.UserDataSource;
 import katsapov.room.DAO.UserDatabase;
+import katsapov.room.Database.UserRepository;
 import katsapov.room.Model.User;
 
 public class MainActivity extends AppCompatActivity {
 
     //Adapter
     List<User> userList = new ArrayList<>();
-    ArrayAdapter adapter;
+    ArrayAdapter<User> adapter;
 
     //Database
     private CompositeDisposable compositeDisposable;
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         ListView listOfUsers = findViewById(R.id.listOfUsers);
         FloatingActionButton fab = findViewById(R.id.fab);
 
-        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, userList);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, userList);
         registerForContextMenu(listOfUsers);
         listOfUsers.setAdapter(adapter);
 
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 //random email
                 Disposable disposable = Observable.create(new ObservableOnSubscribe<Object>() {
                     @Override
-                    public void subscribe(ObservableEmitter<Object> e) throws Exception {
+                    public void subscribe(ObservableEmitter<Object> e) {
                         User user = new User("Sellwin",
                                 UUID.randomUUID().toString() + "@");
                         userRepository.insertUser(user);
@@ -82,17 +82,17 @@ public class MainActivity extends AppCompatActivity {
                         .subscribeOn(Schedulers.io())
                         .subscribe(new Consumer() {
                             @Override
-                            public void accept(Object o) throws Exception {
+                            public void accept(Object o) {
                                 Toast.makeText(MainActivity.this, "User added", Toast.LENGTH_SHORT).show();
                             }
                         }, new Consumer<Throwable>() {
                             @Override
-                            public void accept(Throwable throwable) throws Exception {
+                            public void accept(Throwable throwable) {
                                 Toast.makeText(MainActivity.this, "" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         },new Action() {
                             @Override
-                            public void run() throws Exception {
+                            public void run() {
                                 loadData();//refresh data
                             }
                         });
@@ -107,12 +107,12 @@ public class MainActivity extends AppCompatActivity {
                         .subscribeOn(Schedulers.io())
                         .subscribe(new Consumer<List<User>>() {
                             @Override
-                            public void accept(List<User> users) throws Exception {
+                            public void accept(List<User> users) {
                                 onGetAllUserSuccess(users);
                             }
                         }, new Consumer<Throwable>() {
                             @Override
-                            public void accept(Throwable throwable) throws Exception {
+                            public void accept(Throwable throwable) {
                                 Toast.makeText(MainActivity.this, "" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     private void deleteAllUsers() {
         Disposable disposable = Observable.create(new ObservableOnSubscribe<Object>() {
             @Override
-            public void subscribe(ObservableEmitter<Object> e) throws Exception {
+            public void subscribe(ObservableEmitter<Object> e) {
                 userRepository.deleteAllUsers();
                 e.onComplete();
             }
@@ -153,16 +153,16 @@ public class MainActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Consumer() {
                     @Override
-                    public void accept(Object o) throws Exception {
+                    public void accept(Object o) {
                     }
                 }, new Consumer<Throwable>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
+                    public void accept(Throwable throwable) {
                         Toast.makeText(MainActivity.this, "" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 },new Action() {
                     @Override
-                    public void run() throws Exception {
+                    public void run() {
                         loadData();//refresh data
                     }
                 });
@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
     private void deleteUser(final User user) {
         Disposable disposable = Observable.create(new ObservableOnSubscribe<Object>() {
             @Override
-            public void subscribe(ObservableEmitter<Object> e) throws Exception {
+            public void subscribe(ObservableEmitter<Object> e) {
                 userRepository.deleteUser(user);
                 e.onComplete();
             }
@@ -245,16 +245,16 @@ public class MainActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Consumer() {
                                @Override
-                               public void accept(Object o) throws Exception {
+                               public void accept(Object o) {
                                }
                            }, new Consumer<Throwable>() {
                                @Override
-                               public void accept(Throwable throwable) throws Exception {
+                               public void accept(Throwable throwable) {
                                    Toast.makeText(MainActivity.this, "" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                                }
                            },new Action() {
                                @Override
-                               public void run() throws Exception {
+                               public void run() {
                                    loadData();//refresh data
                                }
 
@@ -262,11 +262,10 @@ public class MainActivity extends AppCompatActivity {
                 );
         compositeDisposable.add(disposable);
     }
-
     private  void updateUser(final User user){
         Disposable disposable = Observable.create(new ObservableOnSubscribe<Object>() {
             @Override
-            public void subscribe(ObservableEmitter<Object> e) throws Exception {
+            public void subscribe(ObservableEmitter<Object> e) {
                 userRepository.updateUser(user);
                 e.onComplete();
             }
@@ -275,16 +274,16 @@ public class MainActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Consumer() {
                     @Override
-                    public void accept(Object o) throws Exception {
+                    public void accept(Object o) {
                     }
                 }, new Consumer<Throwable>() {
                     @Override
-                    public void accept(Throwable throwable) throws Exception {
+                    public void accept(Throwable throwable) {
                         Toast.makeText(MainActivity.this, "" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 },new Action() {
                     @Override
-                    public void run() throws Exception {
+                    public void run() {
                         loadData();//refresh data
                     }
 
@@ -292,7 +291,6 @@ public class MainActivity extends AppCompatActivity {
                 );
         compositeDisposable.add(disposable);
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

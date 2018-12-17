@@ -54,5 +54,14 @@ public class User {
 
     public String toString() {
         return name + "\n" + email;
+
+
+        // and with transatction can
+       /* @Relation(parentColumn = "id", entityColumn = "email")
+        public List<User> users;*/
+
+       //Converter
+       /* @TypeConverters({HobbiesConverter.class})
+        public List<String> hobbies;*/
     }
 }
